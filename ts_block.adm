@@ -1,0 +1,42 @@
+CLASS MACHINE
+
+CATEGORY "Wellbury LLC"
+	CATEGORY "ts_block"
+		KEYNAME "Software\Policies\Wellbury LLC\ts_block"
+
+		POLICY "Block attempts"
+			PART "Block attempts threshold" NUMERIC REQUIRED SPIN 1
+				VALUENAME "BlockAttempts"
+				DEFAULT 5
+				MIN 2
+			END PART ; "Block attempts threshold"
+			EXPLAIN "The number of sequential failed logon attempts (with accounts that are not considered 'block immediately' accounts) that will trigger a block."
+		END POLICY
+
+		POLICY "Block duration"
+			PART "Block duration (seconds)" NUMERIC REQUIRED SPIN 1
+				VALUENAME "BlockDuration"
+				DEFAULT 300
+				MIN 1
+			END PART ; "Block duration"
+			EXPLAIN "The duration, in seconds, of a block (either because of reaching the BlockAttempts threshhold or because of a 'block immediately')."
+		END POLICY
+
+		POLICY "Block timeout"
+			PART "Block timeout (seconds)" NUMERIC REQUIRED SPIN 1
+				VALUENAME "BlockTimeout"
+				DEFAULT 120
+				MIN 1
+			END PART ; "Block timeout"
+			EXPLAIN "The duration, in seconds, that must elapse between failed logon attempts to reset the count of failed logon attempts for a given IP address."
+		END POLICY
+
+		POLICY "Black-hole IP address"
+			PART "Black-hole IP address" EDITTEXT REQUIRED
+				VALUENAME "BlackholeIP"
+			END PART ; "Block timeout"
+			EXPLAIN "The IP address used for the black-hole route (for Windows Server 2003). If not specified the default algorithm of selecting the IP address of a network interface with no default gateway specified will be used. This setting is not used in Windows Server 2008 and later versions of Windows."
+		END POLICY
+
+	END CATEGORY ; "ts_block"
+END CATEGORY ; "Wellbury LLC"
