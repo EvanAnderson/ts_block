@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
- <Product Id='DAB52735-BF56-5081-B165-8EF0C4B224AE' Name='Terminal Services Brute Force Block (ts_block)' Language='1033' Version='20110831' Manufacturer='Wellbury LLC' UpgradeCode='D78EDDFB-93DF-12CF-1C82-871358588B21'>
+ <Product Id='DAB52735-BF56-5081-B165-8EF0C4B224AE' Name='Terminal Services Brute Force Block (ts_block)' Language='1033' Version='$(env.RELEASE)' Manufacturer='Wellbury LLC' UpgradeCode='D78EDDFB-93DF-12CF-1C82-871358588B21'>
   <Package Id='30B0BAF0-A69D-12DC-1902-B41833668899' InstallerVersion='200' Compressed='yes' />
 
   <!-- Install to all users only -->
@@ -17,12 +17,10 @@
    <Directory Id='ProgramFilesFolder' Name='PFiles'>
     <Directory Id='TARGETDIR' Name='ts_block'>
      <Component Id='component0' Guid='EE750F0F-9602-6999-66FF-90E30AB29CD0' DiskId='1'>
-      <File Id='file0' Name='nssm.exe' src='nssm.exe' />
-      <File Id='file1' Name='README.txt' src='README.txt' />
-      <File Id='file2' Name='ts_block.vbs' src='ts_block.vbs' />
-      <File Id='file3' Name='LICENSE' src='LICENSE' />
-      <File Id='file4' Name='ts_block.wxs' src='ts_block.wxs' />
-      <File Id='file5' Name='make-msi.bat' src='make-msi.bat' />
+      <File Id='file0' Name='nssm.exe' src='third-party\nssm.exe' />
+      <File Id='file1' Name='README.txt' src='..\README.txt' />
+      <File Id='file2' Name='ts_block.vbs' src='..\ts_block.vbs' />
+      <File Id='file3' Name='LICENSE' src='..\LICENSE' />
      </Component>
     </Directory>
    </Directory>
@@ -31,17 +29,23 @@
   <CustomAction Id='InstallService'
    FileKey='file0'
    Execute='deferred'
+   Impersonate='no'
    ExeCommand='install ts_block [WindowsFolder]System32\cscript.exe \"[TARGETDIR]ts_block.vbs\"' />
 
   <CustomAction Id='UninstallService' 
    FileKey='file0'
    Execute='deferred'
+   Impersonate='no'
    ExeCommand='remove ts_block confirm' />
 
   <InstallExecuteSequence>
    <Custom Action='InstallService' Before='InstallFinalize'>NOT (REMOVE="ALL")</Custom>
    <Custom Action='UninstallService' Before='RemoveFiles'>REMOVE="ALL"</Custom>
   </InstallExecuteSequence>
+
+  <Condition Message="Windows Server 2003 or newer is required for installation.">
+   WindowsBuild > 2600
+  </Condition>
 
   <Feature Id='Feature' Title='feature0' Level='1'>
    <ComponentRef Id='component0' />

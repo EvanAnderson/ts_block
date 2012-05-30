@@ -4,6 +4,7 @@ Option Explicit
 ' Copyright 2011 Wellbury LLC - See LICENSE for license information
 '
 ' Release 20110831 - Adapted from sshd_block release 20100120
+' Release 20120530 - No change from 20110831 code for ts_block script
 
 ' External executables required to be accessible from PATH:
 '

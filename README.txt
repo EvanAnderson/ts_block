@@ -1,7 +1,8 @@
-ts_block.vbs - Blocks IP addresses generating invalid Terminal Services logons
+ts_block.vbs - Blocks brute force Terminal Services login attempts
 Copyright 2011 Wellbury LLC - See LICENSE for license information
 
 Release 20110901 - Adapted from sshd_block release 20100120
+Release 20120530 - Added MSI to distribution
 
 For support, please contact Evan Anderson at Wellbury LLC
 EAnderson@wellbury.com, (866) 569-9799, ext 801
@@ -144,9 +145,9 @@ Test the functionality of the script by performing both invalid logons
 using both a "block immediately" account and attempting repeated logons 
 with a valid or invalid account that is not in the "block immediately" 
 list. Blocking and unblocking events will be logged in the Application 
-event log. (It is recommended that you perform your tests via a remote 
-control mechanism such that you do not lose communication with the 
-server computer during testing.) 
+event log. (It is recommended that you perform your tests via a protocol
+that won't cause you to lose communication with the server computer
+during testing or from an IP address that isn't going to be blocked.) 
 
 
 Windows Service Installation
@@ -216,7 +217,9 @@ A Windows Installer package (MSI) version of ts_block is included with
 this distribution (along with the WiX source file used to create the 
 MSI). The MSI is self-contained (all necessary files are compressed and 
 embedded within it) and can be used for automated deployment of ts_block 
-as a service under NSSM. 
+as a service under NSSM. It has been tested using Group Policy Software
+Installation Policy under Windows Server 2003, Windows Server 2008 R2,
+and Windows 7. Uninstallation via Group Policy has also been tested.
 
 
 Future Roadmap
