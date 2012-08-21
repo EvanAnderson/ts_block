@@ -45,7 +45,7 @@ Const DEFAULT_BLOCK_ATTEMPTS = 5		' Attempts
 Const REG_BLOCK_ATTEMPTS = "BlockAttempts"
 
 ' Expiration (in seconds) for IPs to be blocked
-Const DEFAULT_BLOCK_DURATION = 300
+Const DEFAULT_BLOCK_DURATION = 3600
 Const REG_BLOCK_DURATION = "BlockDuration"
 
 ' Timeout for attempts before a new attempt is considered attempt #1
@@ -55,11 +55,15 @@ Const REG_BLOCK_TIMEOUT = "BlockTimeout"
 ' Black hole IP address (if hard-specified)
 Const REG_BLACKHOLE_IP = "BlackholeIP"
 
+' Whitelist (Never Block these IP Addresses)
+Const REG_WHITELIST = "|98.193.208.199|98.252.212.58|"
+
 ' Usernames that attempted logons for result in immediate blocking
 Set dictBlockImmediatelyUsers = CreateObject("Scripting.Dictionary")
 dictBlockImmediatelyUsers.Add "administrator", 1
 dictBlockImmediatelyUsers.Add "root", 1
 dictBlockImmediatelyUsers.Add "guest", 1
+dictBlockImmediatelyUsers.Add "ftp", 1
 
 ' ===================( End Configuration )===================
 
@@ -316,6 +320,10 @@ Sub eventSink_OnObjectReady(objEvent, objWbemAsyncContext)
 	' Make sure only characters allowed in IP addresses are passed to external commands
 	IP = regexpSanitizeIP.Replace(IP, "")
 
+	If InStr(REG_WHITELIST, "|" & IP & "|") > 0 Then
+		Exit Sub
+	End If
+	
 	' If the event didn't generate both a username and IP address then do nothing
 	If (IP <> "") AND (user <> "") Then
 		If BlockImmediate(user) Then Block(IP) Else LogFailedLogonAttempt(IP)
