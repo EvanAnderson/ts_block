@@ -1,0 +1,39 @@
+<policyDefinitionResources revision="1.0" schemaVersion="1.0">
+  <displayName>
+  </displayName>
+  <description>
+  </description>
+  <resources>
+    <stringTable>
+      <string id="unknown_0">Wellbury LLC</string>
+      <string id="POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242">Block attempts threshold</string>
+      <string id="SUPPORTED_WindowsNET">At least Microsoft Windows Server 2003</string>
+      <string id="POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242_Help">The number of sequential failed logon attempts (with accounts that are not considered 'block immediately' accounts) that will trigger a block.</string>
+      <string id="POL_E9649283_EF21_46DE_A4EB_94755E8AB534">Block duration</string>
+      <string id="POL_E9649283_EF21_46DE_A4EB_94755E8AB534_Help">The duration, in seconds, of a block (either because of reaching the BlockAttempts threshhold or because of a 'block immediately').</string>
+      <string id="POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5">Block timeout</string>
+      <string id="POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5_Help">The duration, in seconds, that must elapse between failed logon attempts to reset the count of failed logon attempts for a given IP address.</string>
+      <string id="POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F">Black-hole IP address</string>
+      <string id="POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F_Help">The IP address used for the black-hole route (for Windows Server 2003). If not specified the default algorithm of selecting the IP address of a network interface with no default gateway specified will be used. This setting is not used in Windows Server 2008 and later versions of Windows.</string>
+      <string id="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547">ts_block</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242">
+        <decimalTextBox refId="DXT_53873407_6173_4187_A01A_7CA20BA6B30C" defaultValue="5">Block attempts threshold</decimalTextBox>
+      </presentation>
+      <presentation id="POL_E9649283_EF21_46DE_A4EB_94755E8AB534">
+        <decimalTextBox refId="DXT_3C1BBDAB_16FC_44B8_99BA_5FCC92B2C4E5" defaultValue="300">Block duration</decimalTextBox>
+      </presentation>
+      <presentation id="POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5">
+        <decimalTextBox refId="DXT_6480590B_BF7A_442D_9674_2CB01C1480A8" defaultValue="120">Block timeout</decimalTextBox>
+      </presentation>
+      <presentation id="POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F">
+        <textBox refId="TXT_CEB9BE72_9838_4F14_9534_F22A942BA846">
+          <label>Black-hole IP address</label>
+          <defaultValue>
+          </defaultValue>
+        </textBox>
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>

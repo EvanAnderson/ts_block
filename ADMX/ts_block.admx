@@ -1,0 +1,48 @@
+<policyDefinitions revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="fullarmor" namespace="FullArmor.Policies.504CBC92_2FDF_44D9_BEDD_38D1289FBBE5" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <resources minRequiredRevision="1.0" />
+  <supportedOn>
+    <definitions>
+      <definition name="SUPPORTED_WindowsNET" displayName="$(string.SUPPORTED_WindowsNET)" />
+    </definitions>
+  </supportedOn>
+  <categories>
+    <category name="WellburyLLC" displayName="$(string.unknown_0)" />
+    <category name="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547" displayName="$(string.CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547)">
+      <parentCategory ref="WellburyLLC" />
+    </category>
+  </categories>
+  <policies>
+    <policy name="POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242" class="Machine" displayName="$(string.POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242)" explainText="$(string.POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242_Help)" presentation="$(presentation.POL_B1009DB8_CB23_4FCE_89DC_0C7288DDF242)" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockAttempts">
+      <parentCategory ref="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547" />
+      <supportedOn ref="SUPPORTED_WindowsNET" />
+      <elements>
+        <decimal id="DXT_53873407_6173_4187_A01A_7CA20BA6B30C" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockAttempts" required="true" minValue="2" />
+      </elements>
+    </policy>
+    <policy name="POL_E9649283_EF21_46DE_A4EB_94755E8AB534" class="Machine" displayName="$(string.POL_E9649283_EF21_46DE_A4EB_94755E8AB534)" explainText="$(string.POL_E9649283_EF21_46DE_A4EB_94755E8AB534_Help)" presentation="$(presentation.POL_E9649283_EF21_46DE_A4EB_94755E8AB534)" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockDuration">
+      <parentCategory ref="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547" />
+      <supportedOn ref="SUPPORTED_WindowsNET" />
+      <elements>
+        <decimal id="DXT_3C1BBDAB_16FC_44B8_99BA_5FCC92B2C4E5" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockDuration" required="true" minValue="1" />
+      </elements>
+    </policy>
+    <policy name="POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5" class="Machine" displayName="$(string.POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5)" explainText="$(string.POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5_Help)" presentation="$(presentation.POL_38E7A3C0_53C5_40D9_BDAC_B5365F3307A5)" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockTimeout">
+      <parentCategory ref="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547" />
+      <supportedOn ref="SUPPORTED_WindowsNET" />
+      <elements>
+        <decimal id="DXT_6480590B_BF7A_442D_9674_2CB01C1480A8" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlockTimeout" required="true" minValue="1" />
+      </elements>
+    </policy>
+    <policy name="POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F" class="Machine" displayName="$(string.POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F)" explainText="$(string.POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F_Help)" presentation="$(presentation.POL_B68ABBBD_ED7E_45D5_8D51_BE3A3DA9420F)" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlackholeIP">
+      <parentCategory ref="CAT_3B9BF168_B2B5_4DFF_BCBE_D4728FE14547" />
+      <supportedOn ref="SUPPORTED_WindowsNET" />
+      <elements>
+        <text id="TXT_CEB9BE72_9838_4F14_9534_F22A942BA846" key="Software\Policies\Wellbury LLC\ts_block" valueName="BlackholeIP" required="true" />
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

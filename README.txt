@@ -120,13 +120,13 @@ address of a network interface with no default gateway specified will be
 used.  This setting is not used in Windows Server 2008 and later versions
 of Windows.
 
-A Group Policy Administrative Template (ADM) file is included with this 
-distribution that is capable of setting these values. Deploying a GPO 
-near the top of the domain with the BlockAttempts, BlockDuration, and 
-BlockTimeout values specified and Site or OU-level GPOs with the 
-BlackholeIP value specified (as this will vary based on the subnets 
-where the server computers are located, and is only necessary for 
-Windows Server 2003 machines) is recommended. 
+A Group Policy Administrative Template (ADM or ADMX) file is included 
+with this  distribution that is capable of setting these values. 
+Deploying a GPO  near the top of the domain with the BlockAttempts, 
+BlockDuration, and BlockTimeout values specified and Site or OU-level 
+GPOs with the BlackholeIP value specified (as this will vary based on 
+the subnets where the server computers are located, and is only necessary 
+for Windows Server 2003 machines) is recommended.
 
 
 Script Testing
