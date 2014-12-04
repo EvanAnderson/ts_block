@@ -118,13 +118,13 @@ Next ' intOSBuild
 ' Read configuration from the registry, if present, in a really simplsitic way
 On Error Resume Next ' Noooo!!!
 intBlockDuration = DEFAULT_BLOCK_DURATION
-If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_DURATION)) > 0 Then intBlockDuration = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_DURATION))
+If CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_DURATION)) > 0 Then intBlockDuration = CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_DURATION))
 
 intBlockAttempts = DEFAULT_BLOCK_ATTEMPTS
-If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS)) > 0 Then intBlockAttempts = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS))
+If CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS)) > 0 Then intBlockAttempts = CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS))
 
 intBlockTimeout = DEFAULT_BLOCK_TIMEOUT
-If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
+If CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CLng(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
 
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
 	blackHoleIPAddress = regexpSanitizeIP.Replace(objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP), "")
