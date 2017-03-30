@@ -53,7 +53,10 @@ Const DEFAULT_BLOCK_TIMEOUT = 120	' in X seconds
 Const REG_BLOCK_TIMEOUT = "BlockTimeout"
 
 ' Black hole IP address (if hard-specified)
-Const REG_BLACKHOLE_IP = "0.0.0.0"
+Const REG_BLACKHOLE_IP = "BlackholeIP"
+
+' Blocking style (may prefer to use routing if Windows Firewall is disabled)
+Const REG_BLOCK_STYLE = "BlockStyle"
 
 ' Usernames that attempted logons for result in immediate blocking
 Set dictBlockImmediatelyUsers = CreateObject("Scripting.Dictionary")
@@ -112,7 +115,6 @@ For Each intOSBuild in colOperatingSystem
 		WScript.Quit EVENTLOG_ID_ERROR_WIN_XP
 	End If
 	
-	If DEBUGGING Then WScript.Echo "intBlackHoleStyle = " & intBlackHoleStyle 
 Next ' intOSBuild
 
 ' Read configuration from the registry, if present, in a really simplsitic way
@@ -129,8 +131,12 @@ If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlock
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
 	blackHoleIPAddress = regexpSanitizeIP.Replace(objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP), "")
 Else
-	blackHoleIPAddress = ""
+	blackHoleIPAddress = "0.0.0.0"
 End If
+
+' Override block style if set in registry
+If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE)) > 0 Then intBlockStyle = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE))
+If DEBUGGING Then WScript.Echo "intBlackHoleStyle = " & intBlackHoleStyle 
 
 On Error Goto 0
 
