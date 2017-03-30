@@ -53,7 +53,7 @@ Const DEFAULT_BLOCK_TIMEOUT = 120	' in X seconds
 Const REG_BLOCK_TIMEOUT = "BlockTimeout"
 
 ' Black hole IP address (if hard-specified)
-Const REG_BLACKHOLE_IP = "BlackholeIP"
+Const REG_BLACKHOLE_IP = "0.0.0.0"
 
 ' Usernames that attempted logons for result in immediate blocking
 Set dictBlockImmediatelyUsers = CreateObject("Scripting.Dictionary")
