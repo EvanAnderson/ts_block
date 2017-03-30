@@ -53,6 +53,7 @@ Const DEFAULT_BLOCK_TIMEOUT = 120	' in X seconds
 Const REG_BLOCK_TIMEOUT = "BlockTimeout"
 
 ' Black hole IP address (if hard-specified)
+Const DEFAULT_BLACKHOLE_IP = "0.0.0.0"
 Const REG_BLACKHOLE_IP = "BlackholeIP"
 
 ' Blocking style (may prefer to use routing if Windows Firewall is disabled)
@@ -128,14 +129,13 @@ If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS)) > 0 Then intBloc
 intBlockTimeout = DEFAULT_BLOCK_TIMEOUT
 If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
 
+blackHoleIPAddress = DEFAULT_BLACKHOLE_IP
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
 	blackHoleIPAddress = regexpSanitizeIP.Replace(objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP), "")
-Else
-	blackHoleIPAddress = "0.0.0.0"
 End If
 
 ' Override block style if set in registry
-If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE)) > 0 Then intBlockStyle = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE))
+If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE)) > 0 Then intBlackHoleStyle = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE))
 If DEBUGGING Then WScript.Echo "intBlackHoleStyle = " & intBlackHoleStyle 
 
 On Error Goto 0
