@@ -229,7 +229,7 @@ Sub Unblock(IP)
 	Dim strRunCommand
 
 	If (TESTING <> 1) Then 
-		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route delete " & IP & " mask 255.255.255.255 " & blackHoleIPAddress  
+		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route delete " & IP
 		If intBlackholeStyle = BLACKHOLE_FIREWALL Then strRunCommand = "netsh advfirewall firewall delete rule name=""Blackhole " & IP & """"
 
 		If DEBUGGING Then WScript.Echo "Executing " & strRunCommand
