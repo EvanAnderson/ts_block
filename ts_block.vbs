@@ -20,6 +20,7 @@ Dim objShell, objWMIService, objEventSink, blackHoleIPAddress, regexpSanitizeEve
 Dim dictIPLastSeenTime, dictIPBadLogons, dictUnblockTime, dictBlockImmediatelyUsers
 Dim colOperatingSystem, intOSBuild, intBlackholeStyle
 Dim intBlockDuration, intBlockAttempts, intBlockTimeout
+Dim strWhitelist
 
 ' =====================( Configuration )=====================
 
@@ -58,6 +59,9 @@ Const REG_BLACKHOLE_IP = "BlackholeIP"
 
 ' Blocking style (may prefer to use routing if Windows Firewall is disabled)
 Const REG_BLOCK_STYLE = "BlockStyle"
+
+' Whitelisted IP addresses
+Const REG_WHITELIST = "Whitelist"
 
 ' Usernames that attempted logons for result in immediate blocking
 Set dictBlockImmediatelyUsers = CreateObject("Scripting.Dictionary")
@@ -128,6 +132,9 @@ If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS)) > 0 Then intBloc
 
 intBlockTimeout = DEFAULT_BLOCK_TIMEOUT
 If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
+
+strWhitelist = ""
+If objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST) <> "" Then strWhitelist = objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST)
 
 blackHoleIPAddress = DEFAULT_BLACKHOLE_IP
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
@@ -210,8 +217,10 @@ Sub Block(IP)
 	Dim strRunCommand
 	Dim intRemoveBlockTime
 
+	' don't block if IP is in whitelist (no need to log)
+	If InStr(strWhitelist,IP) > 0 Then Exit Sub
 	' Block an IP address (either by black-hole routing it or adding a firewall rule)
-	If (TESTING <> 1) Then 
+	If (TESTING <> 1) Then 	
 		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route add " & IP & " mask 255.255.255.255 " & blackHoleIPAddress 
 		If intBlackholeStyle = BLACKHOLE_FIREWALL Then strRunCommand = "netsh advfirewall firewall add rule name=""Blackhole " & IP & """ dir=in protocol=any action=block remoteip=" & IP 
 
