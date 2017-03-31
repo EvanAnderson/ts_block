@@ -217,8 +217,13 @@ Sub Block(IP)
 	Dim strRunCommand
 	Dim intRemoveBlockTime
 
+	' don't block special IPs
+	If InStr("0.0.0.0",IP) > 0 Then Exit Sub
+	If InStr("255.255.255.255",IP) > 0 Then Exit Sub
+
 	' don't block if IP is in whitelist (no need to log)
 	If InStr(strWhitelist,IP) > 0 Then Exit Sub
+
 	' Block an IP address (either by black-hole routing it or adding a firewall rule)
 	If (TESTING <> 1) Then 	
 		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route add " & IP & " mask 255.255.255.255 " & blackHoleIPAddress 
