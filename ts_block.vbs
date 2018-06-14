@@ -220,6 +220,7 @@ Sub Block(IP)
 	' don't block special IPs
 	If InStr("0.0.0.0",IP) > 0 Then Exit Sub
 	If InStr("255.255.255.255",IP) > 0 Then Exit Sub
+	If InStr("127.0.0.1",IP) > 0 Then Exit Sub
 
 	' don't block if IP is in whitelist (no need to log)
 	If InStr(strWhitelist,IP) > 0 Then Exit Sub
