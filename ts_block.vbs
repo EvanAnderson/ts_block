@@ -5,6 +5,7 @@ Option Explicit
 '
 ' Release 20110831 - Adapted from sshd_block release 20100120
 ' Release 20120530 - No change from 20110831 code for ts_block script
+' Release 20190918 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
 
 ' External executables required to be accessible from PATH:
 '
@@ -25,7 +26,7 @@ Dim strWhitelist
 ' =====================( Configuration )=====================
 
 ' Set to 0 to disable debugging output
-Const DEBUGGING = 0
+Const DEBUGGING = 1	' default to on (event log space is not a problem these days)
 
 ' Set to 0 to disable event log reporting of blocks / unblocks
 Const USE_EVENTLOG = 1
@@ -222,8 +223,28 @@ Sub Block(IP)
 	If InStr("255.255.255.255",IP) > 0 Then Exit Sub
 	If InStr("127.0.0.1",IP) > 0 Then Exit Sub
 
-	' don't block if IP is in whitelist (no need to log)
-	If InStr(strWhitelist,IP) > 0 Then Exit Sub
+	' split whitelist by spaces and check if each one is part of IP for wildcard matches
+	Wi = Split(strWhitelist)
+	For Each Wx in Wi
+		If InStr(IP,Wx) > 0 Then Exit Sub
+	Next
+
+	' get list of local IP addresses and don't block those either - can cause problems!
+	strQuery = "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE MACAddress > ''"
+
+	Set objWMIService = GetObject( "winmgmts://./root/CIMV2" )
+	Set colItems      = objWMIService.ExecQuery( strQuery, "WQL", 48 )
+
+	For Each objItem In colItems
+	    If IsArray( objItem.IPAddress ) Then
+	        If UBound( objItem.IPAddress ) = 0 Then
+       		     strLocalIP = objItem.IPAddress(0)
+	    	Else
+                     strLocalIP = Join( objItem.IPAddress, " " )
+                End If
+            End If
+	Next
+	If InStr(strLocalIP,IP) > 0 Then Exit Sub
 
 	' Block an IP address (either by black-hole routing it or adding a firewall rule)
 	If (TESTING <> 1) Then 	
