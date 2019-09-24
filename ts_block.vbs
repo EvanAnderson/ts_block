@@ -220,14 +220,26 @@ Sub Block(IP)
 	Dim intRemoveBlockTime
 
 	' don't block special IPs
-	If InStr("0.0.0.0",IP) > 0 Then Exit Sub
-	If InStr("255.255.255.255",IP) > 0 Then Exit Sub
-	If InStr("127.0.0.1",IP) > 0 Then Exit Sub
+	If InStr("0.0.0.0",IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
+	If InStr("255.255.255.255",IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
+	If InStr("127.0.0.1",IP) > 0 Then
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
 
 	' split whitelist by spaces and check if each one is part of IP for wildcard matches
 	Wi = Split(strWhitelist)
 	For Each Wx in Wi
-		If InStr(IP,Wx) > 0 Then Exit Sub
+		If InStr(IP,Wx) > 0 Then 
+			LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is whitelisted."
+			Exit Sub
+		End If
 	Next
 
 	' get list of local IP addresses and don't block those either - can cause problems!
@@ -245,7 +257,10 @@ Sub Block(IP)
                 End If
             End If
 	Next
-	If InStr(strLocalIP,IP) > 0 Then Exit Sub
+	If InStr(strLocalIP,IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is configured on a network interface."
+		Exit Sub
+	End If
 
 	' Block an IP address (either by black-hole routing it or adding a firewall rule)
 	If (TESTING <> 1) Then 	
