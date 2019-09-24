@@ -161,7 +161,8 @@ If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Bloc
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Block Attempts: " & intBlockAttempts
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Block Timeout: " & intBlockTimeout
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Blackhole IP: " &  blackHoleIPAddress
-
+If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Whitelist: " & strWhitelist
+																		
 ' Create event sink to catch security events
 Set objEventSink = WScript.CreateObject("WbemScripting.SWbemSink", "eventSink_")
 objWMIService.ExecNotificationQueryAsync objEventSink, "SELECT * FROM __InstanceCreationEvent WHERE TargetInstance ISA 'Win32_NTLogEvent' AND TargetInstance.Logfile = 'Security' AND TargetInstance.EventType = 5 AND (TargetInstance.EventIdentifier = 529 OR TargetInstance.EventIdentifier = 4625) AND (TargetInstance.SourceName = 'Security' OR TargetInstance.SourceName = 'Microsoft-Windows-Security-Auditing')"
