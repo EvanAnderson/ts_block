@@ -72,7 +72,7 @@ dictBlockImmediatelyUsers.Add "guest", 1
 
 ' ===================( End Configuration )===================
 
-Const TS_BLOCK_VERSION = "20110831"
+Const TS_BLOCK_VERSION = "20190918"
 Const BLACKHOLE_ROUTE = 1		' Blackhole packets via routing table
 Const BLACKHOLE_FIREWALL = 2	' Blackhole packets via firewall
 
