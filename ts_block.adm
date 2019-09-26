@@ -35,7 +35,21 @@ CATEGORY "Wellbury LLC"
 			PART "Black-hole IP address" EDITTEXT REQUIRED
 				VALUENAME "BlackholeIP"
 			END PART ; "Block timeout"
-			EXPLAIN "The IP address used for the black-hole route (for Windows Server 2003). If not specified the default algorithm of selecting the IP address of a network interface with no default gateway specified will be used. This setting is not used in Windows Server 2008 and later versions of Windows."
+			EXPLAIN "The IP address used for the black-hole route (for Windows Server 2003, or if specified as the BlockStyle. If not specified, the hardcoded value of 0.0.0.0 will be used (remove this to switch back to the default algorithm of selecting the IP address of a network interface with no default gateway specified will be used. This setting is not used in Windows Server 2008 and later versions of Windows UNLESS the BlockStyle is also set."
+		END POLICY
+		
+		POLICY "Block Style"
+			PART "Block Style" NUMERIC REQUIRED
+				VALUENAME "BlockStyle"
+			END PART
+			EXPLAIN "This setting allows you to manually choose to use black-hole routing on Windows Server 2008 and above, rather than the Windows Firewall (which must be enabled if you want to use it.)  Set this value to 1 to use blackhole routing, or 2 to use the Windows Firewall (or simply leave it unset to use the routing method on Windows Server 2003 and the firewall method on Windows Server 2008 and above."
+		END POLICY
+		
+		POLICY "Whitelist"
+			PART "Whitelist" EDITTEXT REQUIRED
+				VALUENAME "Whitelist"
+			END PART 
+			EXPLAIN "This setting allows you to specify a space-separated list of IPs or network prefixes which will never be blocked.  For instance, the value '1.2.3.4 192.168.3. 10.' will never block requests from IP 1.2.3.4, or and IPs where the first digits match 192.168.3., or any IPs that start with 10."
 		END POLICY
 
 	END CATEGORY ; "ts_block"
