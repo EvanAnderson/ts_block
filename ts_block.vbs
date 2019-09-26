@@ -5,7 +5,7 @@ Option Explicit
 '
 ' Release 20110831 - Adapted from sshd_block release 20100120
 ' Release 20120530 - No change from 20110831 code for ts_block script
-' Release 20190918 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+' Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
 
 ' External executables required to be accessible from PATH:
 '
@@ -72,7 +72,7 @@ dictBlockImmediatelyUsers.Add "guest", 1
 
 ' ===================( End Configuration )===================
 
-Const TS_BLOCK_VERSION = "20190918"
+Const TS_BLOCK_VERSION = "20190926"
 Const BLACKHOLE_ROUTE = 1		' Blackhole packets via routing table
 Const BLACKHOLE_FIREWALL = 2	' Blackhole packets via firewall
 
