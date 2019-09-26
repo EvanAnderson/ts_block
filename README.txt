@@ -3,7 +3,7 @@ Copyright 2011 Wellbury LLC - See LICENSE for license information
 
 Release 20110901 - Adapted from sshd_block release 20100120
 Release 20120530 - Added MSI to distribution
-Release 20190918 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
 
 For support, please contact Evan Anderson at Wellbury LLC
 EAnderson@wellbury.com, (866) 569-9799, ext 801
@@ -129,6 +129,12 @@ of Windows.
 Parameter: BlockStyle
 Type: REG_SZ
 Explanation: Forces the use of black-hole routing on Windows 2008 and above.
+
+Parameter: Whitelist
+Type: REG_SZ
+Explanation: A space-separated list of IPs or networks that will not be blocked.
+For example, a value of '192.168.3. 172.16.55.4' will not block any IPs that 
+start with 192.168.3. or the specific IP 172.16.55.4.
 
 A Group Policy Administrative Template (ADM) file is included with this 
 distribution that is capable of setting these values. Deploying a GPO 
