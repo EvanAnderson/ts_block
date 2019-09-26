@@ -218,6 +218,8 @@ Sub Block(IP)
 	' Block an IP address and set the time for the block expiration
 	Dim strRunCommand
 	Dim intRemoveBlockTime
+	Dim Wi,Wx
+	Dim strQuery,objWMIService,colItems,objItem,strLocalIP
 
 	' don't block special IPs
 	If InStr("0.0.0.0",IP) > 0 Then 
