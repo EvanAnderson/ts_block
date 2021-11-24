@@ -6,6 +6,7 @@ Option Explicit
 ' Release 20110831 - Adapted from sshd_block release 20100120
 ' Release 20120530 - No change from 20110831 code for ts_block script
 ' Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+' Release 20211124 - bugfix: always Trim() whitelist from registry as trailing space screws it up
 
 ' External executables required to be accessible from PATH:
 '
@@ -135,7 +136,7 @@ intBlockTimeout = DEFAULT_BLOCK_TIMEOUT
 If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
 
 strWhitelist = ""
-If objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST) <> "" Then strWhitelist = objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST)
+If objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST) <> "" Then strWhitelist = Trim(objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST))
 
 blackHoleIPAddress = DEFAULT_BLACKHOLE_IP
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
