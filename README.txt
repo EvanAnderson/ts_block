@@ -4,6 +4,7 @@ Copyright 2011 Wellbury LLC - See LICENSE for license information
 Release 20110901 - Adapted from sshd_block release 20100120
 Release 20120530 - Added MSI to distribution
 Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+Release 20211124 - bugfix: always Trim() whitelist from registry as trailing space screws it up
 
 For support, please contact Evan Anderson at Wellbury LLC
 EAnderson@wellbury.com, (866) 569-9799, ext 801
