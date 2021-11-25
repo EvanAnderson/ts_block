@@ -3,6 +3,8 @@ Copyright 2011 Wellbury LLC - See LICENSE for license information
 
 Release 20110901 - Adapted from sshd_block release 20100120
 Release 20120530 - Added MSI to distribution
+Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+Release 20211124 - bugfix: always Trim() whitelist from registry as trailing space screws it up
 
 For support, please contact Evan Anderson at Wellbury LLC
 EAnderson@wellbury.com, (866) 569-9799, ext 801
@@ -56,6 +58,11 @@ For Windows Vista, 2008, 7, and 2008 R2 the "Advanced Firewall" is used
 to create inbound firewall rules blocking traffic from the blocked host. 
 On these operating systems no special configuration of the registry or 
 network adapters is necessary. 
+
+NOTE: If you don't wish to use Advanced Firewall you can set the registry
+entry BlockStyle to 1 to force the use of black-hole routing. I have determined
+that (on Windows Server 2008 and above at least) using the special IP
+0.0.0.0 will work and you can ignore the below advice.
 
 Because Windows Server 2003 lacks sufficient features in its built-in 
 firewall functionality a black-hole host route is used. Unfortunately, 
@@ -119,6 +126,16 @@ Server 2003). If not specified the default algorithm of selecting the IP
 address of a network interface with no default gateway specified will be 
 used.  This setting is not used in Windows Server 2008 and later versions
 of Windows.
+
+Parameter: BlockStyle
+Type: REG_SZ
+Explanation: Forces the use of black-hole routing on Windows 2008 and above.
+
+Parameter: Whitelist
+Type: REG_SZ
+Explanation: A space-separated list of IPs or networks that will not be blocked.
+For example, a value of '192.168.3. 172.16.55.4' will not block any IPs that 
+start with 192.168.3. or the specific IP 172.16.55.4.
 
 A Group Policy Administrative Template (ADM) file is included with this 
 distribution that is capable of setting these values. Deploying a GPO 

@@ -5,6 +5,8 @@ Option Explicit
 '
 ' Release 20110831 - Adapted from sshd_block release 20100120
 ' Release 20120530 - No change from 20110831 code for ts_block script
+' Release 20190926 - forked from Evan's version; wildcard whitelist, use black-hole routing by policy
+' Release 20211124 - bugfix: always Trim() whitelist from registry as trailing space screws it up
 
 ' External executables required to be accessible from PATH:
 '
@@ -20,11 +22,12 @@ Dim objShell, objWMIService, objEventSink, blackHoleIPAddress, regexpSanitizeEve
 Dim dictIPLastSeenTime, dictIPBadLogons, dictUnblockTime, dictBlockImmediatelyUsers
 Dim colOperatingSystem, intOSBuild, intBlackholeStyle
 Dim intBlockDuration, intBlockAttempts, intBlockTimeout
+Dim strWhitelist
 
 ' =====================( Configuration )=====================
 
 ' Set to 0 to disable debugging output
-Const DEBUGGING = 0
+Const DEBUGGING = 1	' default to on (event log space is not a problem these days)
 
 ' Set to 0 to disable event log reporting of blocks / unblocks
 Const USE_EVENTLOG = 1
@@ -53,7 +56,14 @@ Const DEFAULT_BLOCK_TIMEOUT = 120	' in X seconds
 Const REG_BLOCK_TIMEOUT = "BlockTimeout"
 
 ' Black hole IP address (if hard-specified)
+Const DEFAULT_BLACKHOLE_IP = "0.0.0.0"
 Const REG_BLACKHOLE_IP = "BlackholeIP"
+
+' Blocking style (may prefer to use routing if Windows Firewall is disabled)
+Const REG_BLOCK_STYLE = "BlockStyle"
+
+' Whitelisted IP addresses
+Const REG_WHITELIST = "Whitelist"
 
 ' Usernames that attempted logons for result in immediate blocking
 Set dictBlockImmediatelyUsers = CreateObject("Scripting.Dictionary")
@@ -63,7 +73,7 @@ dictBlockImmediatelyUsers.Add "guest", 1
 
 ' ===================( End Configuration )===================
 
-Const TS_BLOCK_VERSION = "20110831"
+Const TS_BLOCK_VERSION = "20190926"
 Const BLACKHOLE_ROUTE = 1		' Blackhole packets via routing table
 Const BLACKHOLE_FIREWALL = 2	' Blackhole packets via firewall
 
@@ -112,7 +122,6 @@ For Each intOSBuild in colOperatingSystem
 		WScript.Quit EVENTLOG_ID_ERROR_WIN_XP
 	End If
 	
-	If DEBUGGING Then WScript.Echo "intBlackHoleStyle = " & intBlackHoleStyle 
 Next ' intOSBuild
 
 ' Read configuration from the registry, if present, in a really simplsitic way
@@ -126,11 +135,17 @@ If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_ATTEMPTS)) > 0 Then intBloc
 intBlockTimeout = DEFAULT_BLOCK_TIMEOUT
 If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT)) > 0 Then intBlockTimeout = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_TIMEOUT))
 
+strWhitelist = ""
+If objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST) <> "" Then strWhitelist = Trim(objShell.RegRead(REG_CONFIG_PATH & REG_WHITELIST))
+
+blackHoleIPAddress = DEFAULT_BLACKHOLE_IP
 If objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP) <> "" Then
 	blackHoleIPAddress = regexpSanitizeIP.Replace(objShell.RegRead(REG_CONFIG_PATH & REG_BLACKHOLE_IP), "")
-Else
-	blackHoleIPAddress = ""
 End If
+
+' Override block style if set in registry
+If CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE)) > 0 Then intBlackHoleStyle = CInt(objShell.RegRead(REG_CONFIG_PATH & REG_BLOCK_STYLE))
+If DEBUGGING Then WScript.Echo "intBlackHoleStyle = " & intBlackHoleStyle 
 
 On Error Goto 0
 
@@ -147,7 +162,8 @@ If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Bloc
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Block Attempts: " & intBlockAttempts
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Block Timeout: " & intBlockTimeout
 If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Blackhole IP: " &  blackHoleIPAddress
-
+If DEBUGGING Then LogEvent EVENTLOG_ID_STARTED, EVENTLOG_TYPE_INFORMATION, "Whitelist: " & strWhitelist
+																		
 ' Create event sink to catch security events
 Set objEventSink = WScript.CreateObject("WbemScripting.SWbemSink", "eventSink_")
 objWMIService.ExecNotificationQueryAsync objEventSink, "SELECT * FROM __InstanceCreationEvent WHERE TargetInstance ISA 'Win32_NTLogEvent' AND TargetInstance.Logfile = 'Security' AND TargetInstance.EventType = 5 AND (TargetInstance.EventIdentifier = 529 OR TargetInstance.EventIdentifier = 4625) AND (TargetInstance.SourceName = 'Security' OR TargetInstance.SourceName = 'Microsoft-Windows-Security-Auditing')"
@@ -203,9 +219,54 @@ Sub Block(IP)
 	' Block an IP address and set the time for the block expiration
 	Dim strRunCommand
 	Dim intRemoveBlockTime
+	Dim Wi,Wx
+	Dim strQuery,objWMIService,colItems,objItem,strLocalIP
+
+	' don't block special IPs
+	If InStr("0.0.0.0",IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
+	If InStr("255.255.255.255",IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
+	If InStr("127.0.0.1",IP) > 0 Then
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is a special system IP."
+		Exit Sub
+	End If
+
+	' split whitelist by spaces and check if each one is part of IP for wildcard matches
+	Wi = Split(strWhitelist)
+	For Each Wx in Wi
+		If InStr(IP,Wx) > 0 Then 
+			LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is whitelisted."
+			Exit Sub
+		End If
+	Next
+
+	' get list of local IP addresses and don't block those either - can cause problems!
+	strQuery = "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE MACAddress > ''"
+
+	Set objWMIService = GetObject( "winmgmts://./root/CIMV2" )
+	Set colItems      = objWMIService.ExecQuery( strQuery, "WQL", 48 )
+
+	For Each objItem In colItems
+	    If IsArray( objItem.IPAddress ) Then
+	        If UBound( objItem.IPAddress ) = 0 Then
+       		     strLocalIP = objItem.IPAddress(0)
+	    	Else
+                     strLocalIP = Join( objItem.IPAddress, " " )
+                End If
+            End If
+	Next
+	If InStr(strLocalIP,IP) > 0 Then 
+		LogEvent 258, EVENTLOG_TYPE_INFORMATION, "Skipped " & IP & " because it is configured on a network interface."
+		Exit Sub
+	End If
 
 	' Block an IP address (either by black-hole routing it or adding a firewall rule)
-	If (TESTING <> 1) Then 
+	If (TESTING <> 1) Then 	
 		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route add " & IP & " mask 255.255.255.255 " & blackHoleIPAddress 
 		If intBlackholeStyle = BLACKHOLE_FIREWALL Then strRunCommand = "netsh advfirewall firewall add rule name=""Blackhole " & IP & """ dir=in protocol=any action=block remoteip=" & IP 
 
@@ -229,7 +290,7 @@ Sub Unblock(IP)
 	Dim strRunCommand
 
 	If (TESTING <> 1) Then 
-		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route delete " & IP & " mask 255.255.255.255 " & blackHoleIPAddress  
+		If intBlackholeStyle = BLACKHOLE_ROUTE Then strRunCommand = "route delete " & IP
 		If intBlackholeStyle = BLACKHOLE_FIREWALL Then strRunCommand = "netsh advfirewall firewall delete rule name=""Blackhole " & IP & """"
 
 		If DEBUGGING Then WScript.Echo "Executing " & strRunCommand
